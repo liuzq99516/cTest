@@ -19,7 +19,7 @@ public static class DependencyInjection
         services.Configure<JavaPushOptions>(configuration.GetSection(JavaPushOptions.SectionName));
 
         var connectionString = configuration.GetConnectionString("Default")
-            ?? "Server=localhost;Port=3306;Database=power_trader_exam;User=root;Password=root;CharSet=utf8mb4;";
+            ?? "Server=localhost;Port=3306;Database=power_trader_exam;User=root;Password=root;CharSet=utf8mb4;Allow User Variables=true;";
 
         var serverVersion = ServerVersion.Parse("8.0.36-mysql");
         services.AddDbContext<AppDbContext>(options =>

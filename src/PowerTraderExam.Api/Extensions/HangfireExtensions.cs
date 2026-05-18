@@ -14,7 +14,7 @@ public static class HangfireExtensions
         services.Configure<HangfireOptions>(configuration.GetSection(HangfireOptions.SectionName));
 
         var connectionString = configuration.GetConnectionString("Default")
-            ?? "Server=localhost;Port=3306;Database=power_trader_exam;User=root;Password=root;CharSet=utf8mb4;";
+            ?? "Server=localhost;Port=3306;Database=power_trader_exam;User=root;Password=root;CharSet=utf8mb4;Allow User Variables=true;";
 
         services.AddHangfire(config => config
             .SetDataCompatibilityLevel(CompatibilityLevel.Version_170)
@@ -39,23 +39,29 @@ public static class HangfireExtensions
 
         if (hangfireOptions.EnableDashboard)
         {
+            app.UseMiddleware<HangfireDashboardUiMiddleware>();
+
             var authFilter = app.Services.GetRequiredService<HangfireDashboardAuthorizationFilter>();
             app.UseHangfireDashboard(hangfireOptions.DashboardPath, new DashboardOptions
             {
-                Authorization = new[] { authFilter }
+                Authorization = new[] { authFilter },
+                DashboardTitle = hangfireOptions.DashboardTitle,
+                AppPath = "/swagger",
+                DisplayStorageConnectionString = false,
+                DarkModeEnabled = false
             });
         }
 
         if (javaPushOptions.EnableBackgroundPush)
         {
             RecurringJob.AddOrUpdate<IScorePushJob>(
-                "score-push-retry",
+                "成绩推送重试",
                 job => job.ExecuteAsync(CancellationToken.None),
                 ToMinuteIntervalCron(javaPushOptions.RetryIntervalMinutes));
         }
         else
         {
-            RecurringJob.RemoveIfExists("score-push-retry");
+            RecurringJob.RemoveIfExists("成绩推送重试");
         }
 
         return app;

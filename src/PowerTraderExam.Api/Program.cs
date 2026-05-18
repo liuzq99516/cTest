@@ -1,4 +1,6 @@
+using System.Globalization;
 using Microsoft.AspNetCore.Authentication;
+using Microsoft.AspNetCore.Localization;
 using Microsoft.EntityFrameworkCore;
 using PowerTraderExam.Api.Auth;
 using PowerTraderExam.Api.Extensions;
@@ -54,6 +56,17 @@ builder.Services.AddHangfireServices(builder.Configuration);
 
 var app = builder.Build();
 
+var zhCulture = CultureInfo.GetCultureInfo("zh-CN");
+var zhUiCulture = CultureInfo.GetCultureInfo("zh");
+var localizationOptions = new RequestLocalizationOptions
+{
+    DefaultRequestCulture = new RequestCulture(zhCulture, zhUiCulture),
+    SupportedCultures = new[] { zhCulture },
+    SupportedUICultures = new[] { zhUiCulture, zhCulture }
+};
+localizationOptions.RequestCultureProviders.Insert(0, new AcceptLanguageHeaderRequestCultureProvider());
+app.UseRequestLocalization(localizationOptions);
+
 using (var scope = app.Services.CreateScope())
 {
     var db = scope.ServiceProvider.GetRequiredService<AppDbContext>();
@@ -66,6 +79,7 @@ if (app.Environment.IsDevelopment())
     app.UseSwaggerUI();
 }
 
+app.UseStaticFiles();
 app.UseMiddleware<ExceptionMiddleware>();
 app.UseAuthentication();
 app.UseAuthorization();

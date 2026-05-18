@@ -1,0 +1,33 @@
+{
+    "version": "0.2.0",
+    "configurations": [
+        {
+            "name": "PowerTraderExam.Api",
+            "type": "coreclr",
+            "request": "launch",
+            "preLaunchTask": "build",
+            "program": "${workspaceFolder}/src/PowerTraderExam.Api/bin/Debug/net6.0/PowerTraderExam.Api.dll",
+            "args": [
+                "--urls",
+                "http://localhost:8080"
+            ],
+            "cwd": "${workspaceFolder}/src/PowerTraderExam.Api",
+            "stopAtEntry": false,
+            "launchSettingsProfile": "PowerTraderExam.Api",
+            "serverReadyAction": {
+                "action": "openExternally",
+                "pattern": "\\bNow listening on:\\s+(https?://\\S+)",
+                "uriFormat": "%s/swagger"
+            },
+            "env": {
+                "ASPNETCORE_ENVIRONMENT": "Development",
+                "ASPNETCORE_URLS": "http://localhost:8080"
+            }
+        },
+        {
+            "name": "PowerTraderExam.Api (attach)",
+            "type": "coreclr",
+            "request": "attach"
+        }
+    ]
+}

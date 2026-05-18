@@ -1,5 +1,6 @@
 using System.Net;
 using System.Text.Json;
+using PowerTraderExam.Api.Hangfire;
 using PowerTraderExam.Application.Common;
 
 namespace PowerTraderExam.Api.Middleware;
@@ -30,6 +31,16 @@ public class ExceptionMiddleware
 
     private static async Task WriteErrorAsync(HttpContext context, Exception ex)
     {
+        if (HangfireFriendlyPage.IsHangfirePath(context.Request.Path))
+        {
+            await HangfireFriendlyPage.WriteAsync(
+                context,
+                "暂时无法加载任务列表",
+                "后台任务页面加载失败，请检查数据库连接与 Hangfire 配置后重试。",
+                HttpStatusCode.OK);
+            return;
+        }
+
         var (status, code, message) = ex switch
         {
             KeyNotFoundException => (HttpStatusCode.NotFound, 404, ex.Message),

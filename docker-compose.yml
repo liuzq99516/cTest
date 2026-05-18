@@ -19,7 +19,7 @@ services:
     ports:
       - "8080:8080"
     environment:
-      ConnectionStrings__Default: "Server=mysql;Port=3306;Database=power_trader_exam;User=root;Password=root;CharSet=utf8mb4;"
+      ConnectionStrings__Default: "Server=mysql;Port=3306;Database=power_trader_exam;User=root;Password=root;CharSet=utf8mb4;Allow User Variables=true;"
       ASPNETCORE_ENVIRONMENT: Development
     depends_on:
       mysql:

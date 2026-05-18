@@ -1,0 +1,31 @@
+/* 空状态提示：避免深色主题下文字被裁切或不可见 */
+#content .alert,
+.container .alert {
+    display: block !important;
+    white-space: normal !important;
+    word-break: break-word;
+    overflow: visible !important;
+    max-width: 100%;
+    margin-bottom: 16px;
+}
+
+.hangfire-empty-hint {
+    font-size: 14px;
+    line-height: 1.6;
+}
+
+body.dark .alert-warning,
+[data-theme="dark"] .alert-warning {
+    color: #664d03 !important;
+    background-color: #fff3cd !important;
+    border-color: #ffecb5 !important;
+}
+
+body.dark .alert-info,
+[data-theme="dark"] .alert-info,
+body.dark .hangfire-empty-hint,
+[data-theme="dark"] .hangfire-empty-hint {
+    color: #055160 !important;
+    background-color: #cff4fc !important;
+    border-color: #b6effb !important;
+}

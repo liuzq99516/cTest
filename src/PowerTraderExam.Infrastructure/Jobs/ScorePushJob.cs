@@ -1,3 +1,4 @@
+using System.ComponentModel;
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
 using PowerTraderExam.Application.Interfaces;
@@ -21,6 +22,7 @@ public class ScorePushJob : IScorePushJob
         _logger = logger;
     }
 
+    [DisplayName("推送待同步成绩到 Java 系统")]
     public async Task ExecuteAsync(CancellationToken cancellationToken = default)
     {
         if (!_options.EnableBackgroundPush)
