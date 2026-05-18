@@ -1,0 +1,29 @@
+services:
+  mysql:
+    image: mysql:8.0
+    environment:
+      MYSQL_ROOT_PASSWORD: root
+      MYSQL_DATABASE: power_trader_exam
+    ports:
+      - "3306:3306"
+    volumes:
+      - mysql_data:/var/lib/mysql
+    healthcheck:
+      test: ["CMD", "mysqladmin", "ping", "-h", "localhost", "-uroot", "-proot"]
+      interval: 5s
+      timeout: 5s
+      retries: 10
+
+  api:
+    build: .
+    ports:
+      - "8080:8080"
+    environment:
+      ConnectionStrings__Default: "Server=mysql;Port=3306;Database=power_trader_exam;User=root;Password=root;CharSet=utf8mb4;"
+      ASPNETCORE_ENVIRONMENT: Development
+    depends_on:
+      mysql:
+        condition: service_healthy
+
+volumes:
+  mysql_data:
