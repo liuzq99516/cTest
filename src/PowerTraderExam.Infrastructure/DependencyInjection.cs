@@ -3,7 +3,7 @@ using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using PowerTraderExam.Application.Interfaces;
 using PowerTraderExam.Application.Options;
-using PowerTraderExam.Infrastructure.HostedServices;
+using PowerTraderExam.Infrastructure.Jobs;
 using PowerTraderExam.Infrastructure.Java;
 using PowerTraderExam.Infrastructure.Persistence;
 using PowerTraderExam.Infrastructure.Services;
@@ -36,8 +36,8 @@ public static class DependencyInjection
         services.AddScoped<ISyncService, SyncService>();
         services.AddScoped<IScoreService, ScoreService>();
         services.AddScoped<IJavaScorePushService, JavaScorePushService>();
+        services.AddScoped<IScorePushJob, ScorePushJob>();
         services.AddSingleton<JavaScorePushClient>();
-        services.AddHostedService<ScorePushBackgroundService>();
 
         return services;
     }

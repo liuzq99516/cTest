@@ -1,6 +1,7 @@
 using Microsoft.AspNetCore.Authentication;
 using Microsoft.EntityFrameworkCore;
 using PowerTraderExam.Api.Auth;
+using PowerTraderExam.Api.Extensions;
 using PowerTraderExam.Api.Middleware;
 using PowerTraderExam.Infrastructure;
 using PowerTraderExam.Infrastructure.Persistence;
@@ -49,6 +50,7 @@ builder.Services.AddAuthentication(AuthSchemes.ApiKey)
 builder.Services.AddAuthorization();
 
 builder.Services.AddInfrastructure(builder.Configuration);
+builder.Services.AddHangfireServices(builder.Configuration);
 
 var app = builder.Build();
 
@@ -68,5 +70,6 @@ app.UseMiddleware<ExceptionMiddleware>();
 app.UseAuthentication();
 app.UseAuthorization();
 app.MapControllers();
+app.UseHangfireApp();
 
 app.Run();

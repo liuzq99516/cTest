@@ -11,6 +11,7 @@
 | 成绩回写 | 考试程序回写 SKILL/THEORY 成绩 |
 | 成绩导出 | 管理端导出 Excel |
 | Java 推送 | `POST /student/grade/callback/score`，RSA 公钥加密签名 |
+| 后台任务 | Hangfire 定时重试未推送成绩（`JavaPush:EnableBackgroundPush`） |
 
 ## 快速启动（Docker）
 
@@ -21,6 +22,7 @@ docker compose up --build
 - API: http://localhost:8080
 - Swagger: http://localhost:8080/swagger
 - 健康检查: http://localhost:8080/api/health
+- Hangfire Dashboard: http://localhost:8080/hangfire（开发环境开放；生产需 `X-Api-Key` 管理端密钥）
 
 ## 本地开发
 
@@ -85,10 +87,17 @@ X-Api-Key: <your-key>
     "PushPath": "/student/grade/callback/score",
     "PublicKeyPem": "-----BEGIN PUBLIC KEY-----\n...\n-----END PUBLIC KEY-----",
     "BatchSize": 50,
-    "EnableBackgroundPush": true
+    "EnableBackgroundPush": true,
+    "RetryIntervalMinutes": 10
+  },
+  "Hangfire": {
+    "DashboardPath": "/hangfire",
+    "EnableDashboard": true
   }
 }
 ```
+
+`EnableBackgroundPush` 为 `true` 时，Hangfire 按 `RetryIntervalMinutes` 分钟执行 `score-push-retry` 任务，自动推送 `NotPushed` / `Failed` 成绩。管理端仍可通过 `POST /api/scores/push` 手动触发。
 
 签名规则：
 
@@ -105,7 +114,7 @@ src/
   PowerTraderExam.Api/           # Web API
   PowerTraderExam.Application/   # DTO、接口、配置
   PowerTraderExam.Domain/        # 实体、枚举
-  PowerTraderExam.Infrastructure/# EF Core、业务实现、Java 推送
+  PowerTraderExam.Infrastructure/# EF Core、业务实现、Java 推送、Hangfire Job
 ```
 
 ## 许可证
