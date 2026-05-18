@@ -7,7 +7,7 @@
 | 功能 | 说明 |
 |------|------|
 | 考试名单 | JSON / Excel 导入考生，按批次管理 |
-| 考生同步 | 多台考试服务器通过 API 拉取待同步考生（单次最多 **200** 人）并确认 |
+| 考生同步 | 多台考试服务器按批次拉取并确认；**每个服务器在同一批次累计最多同步 200 人**（单次拉取也不超过剩余配额） |
 | 成绩回写 | 考试程序回写 SKILL/THEORY 成绩 |
 | 成绩导出 | 管理端导出 Excel |
 | Java 推送 | `POST /student/grade/callback/score`，RSA 公钥加密签名 |
@@ -58,8 +58,10 @@ X-Api-Key: <your-key>
 
 ### 考试服务器（Server Key）
 
-- `GET /api/sync/candidates?batchCode=&limit=` — 拉取待同步考生（`limit` 默认/上限 200）
-- `POST /api/sync/candidates/confirm` — 确认已同步（body: `{ "candidateIds": [1,2] }`）
+- `GET /api/sync/candidates?batchCode=xxx&limit=` — 拉取待同步考生（**batchCode 必填**；该服务器在本批次剩余配额内拉取，`limit` 默认/上限 200）
+- `POST /api/sync/candidates/confirm` — 确认已同步（超限返回 400；body: `{ "candidateIds": [1,2] }`）
+
+拉取响应含 `syncedCountInBatch`、`remainingQuota`、`maxSyncPerBatch`（均为 200 上限相关字段）。
 - `POST /api/scores` — 回写成绩
 
 成绩回写示例：

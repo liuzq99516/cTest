@@ -40,8 +40,19 @@ public class SyncController : ControllerBase
             Response.Headers["X-Sync-Limit-Capped"] = "true";
         }
 
+        if (string.IsNullOrWhiteSpace(batchCode))
+        {
+            return BadRequest(ApiResponse<SyncCandidatesResponse>.Fail(400, "batchCode 为必填参数。"));
+        }
+
         var serverId = User.GetServerId();
         var data = await _syncService.GetPendingCandidatesAsync(serverId, batchCode, effectiveLimit, ct);
+
+        if (data.RemainingQuota < effectiveLimit && data.RemainingQuota >= 0)
+        {
+            Response.Headers["X-Sync-Batch-Quota-Capped"] = "true";
+        }
+
         return Ok(ApiResponse<SyncCandidatesResponse>.Ok(data));
     }
 
